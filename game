@@ -1,0 +1,311 @@
+гет//Kurbanov Pavel
+#include "GL/freeglut.h"
+#include <cmath>
+
+int N=0;
+
+struct block {
+    const float R = 0.09;
+    float x = -.8,
+        y = -.3,
+        sx = .02,
+        sy = -.01;
+    float color[3] = { 0,1,0};
+} boll;
+
+struct PL
+{
+    float x, y;
+} pl, bot;
+
+struct Cloud
+{
+    float R = .125;
+    float x =-1.6, y=0;
+} cloud1,cloud2,cloud3,cloud4;
+
+struct Son
+{
+    float x, y;
+} son;
+
+void Ret()
+{
+
+    boll.x = -.3;
+    boll.y = .5;
+    pl.x = -5;
+    bot.x = 5.25;//+ñòîëá
+    pl.y = -9;
+    bot.y = -9;
+
+    N++;
+}
+
+void Ret1()
+{
+    cloud1.x = -1.6;
+    cloud2.x = -2.8;
+    cloud2.y = .15;
+    cloud3.x = -2;
+    cloud3.y = .2;
+    cloud4.x = -2.5;
+    cloud4.y = .25;
+
+    son.x=1;
+    son.y=.5;
+
+    N++;
+
+}
+
+void sten()
+{
+    glPushMatrix();
+    glScalef(0.05, 0.05, 1);
+    glBegin(GL_QUADS);
+
+    glColor3f(.5, .5, .5);
+    glVertex2f(1, -2);
+    glVertex2f(1, -20);
+    glVertex2f(0, -20);
+    glVertex2f(0, -2);
+
+    glEnd();
+    glPopMatrix();
+}
+
+void dravPl(PL P,float r,float g,float b)
+{
+    glPushMatrix();
+    glScalef(0.1, 0.1, 1);
+    glTranslatef(P.x, P.y, 0);
+    glBegin(GL_QUADS);
+
+    glColor3f(r,g,b);
+    glVertex2f(1, 1);
+    glVertex2f(1, 0);
+    glVertex2f(-1, 0);
+    glVertex2f(-1, 1);
+
+    glEnd();
+    glPopMatrix();
+}
+
+void DrawBoll(block b) {
+    glPushMatrix();
+    glTranslatef(b.x, b.y, 0);
+    glEnable(GL_POINT_SMOOTH);
+    glPointSize(50);
+    glBegin(GL_POINTS);
+    glColor3f(b.color[0], b.color[1], b.color[2]);
+    glVertex3f(0, 0, 0);
+    glEnd();
+    glDisable(GL_POINT_SMOOTH);
+    glPopMatrix();
+}
+void spavn()
+{
+    if (boll.x + boll.R >= 1 || boll.x - boll.R <= -1)
+        boll.sx *= (-1);
+
+    if (boll.y + boll.R >= 1)
+        boll.sy *= (-1);
+    
+    if (boll.y - boll.R <= -1)
+        Ret();
+
+    if ((boll.x + boll.R >= 0) && (boll.y + boll.R <= 0.1) && (boll.x <= 0.13))
+        boll.sx *= (-1);
+
+    if ((boll.y <= -.7) && ((boll.x >= (pl.x - 1) / 10 && boll.x <= (pl.x + 1) / 10) ||
+        (boll.x >= (bot.x - 1) / 10 && boll.x <= (bot.x + 1) / 10))) 
+        boll.sy *= (-1);
+
+    boll.x += boll.sx;
+    boll.y += boll.sy;
+
+    if (cloud1.x - cloud1.R >=1)
+        cloud1.x=-1.6;
+    if (cloud2.x - cloud1.R >=1)
+        cloud2.x=-1.6;
+    if (cloud3.x - cloud1.R >=1)
+        cloud3.x=-1.6;
+    if (cloud4.x - cloud1.R >=1)
+        cloud4.x=-1.6;
+
+    if (son.x  <= 0)
+        son.y-=.00001;
+    if (son.x > 0)
+        son.y+=.00001;
+    if (son.x + cloud1.R <=-1.1){
+        son.x=1.1;
+        son.y=.5;
+    }
+
+
+}
+
+
+void tik(int)
+{
+    spavn();
+
+    glutPostRedisplay();
+    glutTimerFunc(25, tik, 0);
+}
+
+void tik2(int)
+{
+    cloud1.x+=.001;
+    cloud2.x+=.001;
+    cloud3.x+=.0015;
+    cloud4.x+=.0015;
+
+    son.x-=.0001;
+
+
+    glutPostRedisplay();
+    glutTimerFunc(25, tik2, 0);
+}
+void fon(){
+    glPushMatrix();
+
+    glBegin(GL_QUADS);
+    glColor3f(.9,.88,.67);
+    glVertex2f(-1,-1);
+    glVertex2f(1,-1);
+    glVertex2f(1,0);
+    glVertex2f(-1,0);
+    glEnd();
+
+    glBegin(GL_QUADS);
+    glColor3f(.21,.67,.88);
+    glVertex2f(1,0);
+    glVertex2f(-1,0);
+    glVertex2f(-1,.3);
+    glVertex2f(1,.3);
+    glEnd();
+
+    glBegin(GL_QUADS);
+    glColor3f(.66,.85,1);
+    glVertex2f(-1,.3);
+    glVertex2f(1,.3);
+    glVertex2f(1,1);
+    glVertex2f(-1,1);
+    glEnd();
+
+    glPopMatrix();
+
+}
+void DrawCloud (Cloud C){
+    glPushMatrix();
+    glTranslatef(C.x,C.y,0);
+
+    glBegin(GL_QUADS);
+
+    glColor3f(1,1,1);
+
+    glVertex2f(.5,.47);
+    glVertex2f(.4,.47);
+    glVertex2f(.4,.35);
+    glVertex2f(.5,.35);
+
+    glVertex2f(.3,.4);
+    glVertex2f(.3,.33);
+    glVertex2f(.6,.33);
+    glVertex2f(.6,.4);
+
+    glVertex2f(.35,.43);
+    glVertex2f(.55,.43);
+    glVertex2f(.55,.35);
+    glVertex2f(.35,.35);
+
+    glEnd();
+
+    glPopMatrix();
+}
+
+void DrawSon (Son){
+
+    glPushMatrix();
+    glTranslatef(son.x,son.y,0);
+    glEnable(GL_POINT_SMOOTH);
+    glPointSize(300);
+    glBegin(GL_POINTS);
+    glColor3f(1,1,0);
+    glVertex3f(0, 0, 0);
+    glEnd();
+    glDisable(GL_POINT_SMOOTH);
+    glPopMatrix();
+}
+
+
+void renderScene(void) {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    fon();
+
+    DrawSon(son);
+
+    if (N<1){
+    Ret();
+    }
+
+    if (N<2){
+    Ret1();
+    }
+
+    DrawCloud(cloud1);
+    DrawCloud(cloud2);
+    DrawCloud(cloud3);
+    DrawCloud(cloud4);
+
+    DrawBoll(boll);
+    dravPl(pl,1,0,0);
+    dravPl(bot,0,0,1);
+    sten();
+
+
+
+
+
+    glutSwapBuffers();
+}
+void processKeys(unsigned char key, int x, int y) {
+
+    
+    if (key == 114) Ret();//r
+
+    if (key == 13)
+       exit(0);
+
+    //èãðîê 1
+    if (key == 97 && pl.x >= -8)//a
+        pl.x -= 1;
+    if (key == 100 && pl.x <= -2)//d
+        pl.x += 1;
+
+    //èãðîê 2
+    if (key == 107 && bot.x >= 2)//K
+        bot.x -= 1;
+    if (key == 59 && bot.x <= 9)//;
+        bot.x += 1;
+
+    glutPostRedisplay();
+}
+
+int main(int argc, char* argv[])
+{
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
+    glutInitWindowPosition(100, 100);
+    glutInitWindowSize(600, 600);
+    glutCreateWindow("Volibol");
+    glutDisplayFunc(renderScene);
+    glutTimerFunc(50, tik, 0);
+    glutTimerFunc(50, tik2, 0);
+    glutKeyboardFunc(processKeys);
+    glutMainLoop();
+    return 0;
+}
